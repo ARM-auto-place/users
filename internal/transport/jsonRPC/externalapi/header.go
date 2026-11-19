@@ -43,13 +43,13 @@ func (srv *Server) headersHandler(ctx *fiber.Ctx) error {
 
 func headerValue(src interface{}) (value string) {
 
-	switch src.(type) {
+	switch src := src.(type) {
 	case string:
-		return src.(string)
+		return src
 	case iHeaderValue:
-		return src.(iHeaderValue).Header()
+		return src.Header()
 	case fmt.Stringer:
-		return src.(fmt.Stringer).String()
+		return src.String()
 	default:
 		bytes, _ := json.Marshal(src)
 		return string(bytes)

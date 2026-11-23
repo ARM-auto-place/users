@@ -4,16 +4,21 @@ import (
 	"context"
 	"errors"
 	"log"
+	"net/http"
 	"os"
 	"os/signal"
 	"slices"
 	"syscall"
+	"time"
 
+	accessClient "github.com/ARM-auto-place/access/pkg/client/transport"
+	"github.com/ARM-auto-place/access/pkg/client/transport/jsonrpc"
 	"github.com/ARM-auto-place/users/internal/config"
 	"github.com/ARM-auto-place/users/internal/service"
 	"github.com/ARM-auto-place/users/internal/storage/postgres"
 	customhandlers "github.com/ARM-auto-place/users/internal/transport/custom-handels"
 	"github.com/ARM-auto-place/users/internal/transport/jsonRPC/externalapi"
+	"github.com/ARM-auto-place/users/internal/transport/jsonRPC/middlewares"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
 )
@@ -60,6 +65,10 @@ func main() {
 
 	storage := postgres.NewUsersStorage(users, cars)
 	svc := service.NewUsersService(logger, storage)
+	access := accessClient.New(cfg.AccessAddr, accessClient.ClientOption(jsonrpc.ClientHTTP(&http.Client{
+		Timeout: 5 * time.Second,
+	}))).InternalAPI()
+	svc = middlewares.NewAccessMiddleware(svc, access)
 	app := externalapi.New(logger,
 		externalapi.SetReadBufferSize(cfg.MaxRequestHeaderSize),
 		externalapi.MaxBodySize(cfg.MaxRequestBodySize),
@@ -73,7 +82,6 @@ func main() {
 			AllowCredentials: true,
 		})),
 		externalapi.Use(customhandlers.LogRequests),
-		externalapi.Use(customhandlers.Authenticate(cfg.SessionKey, cfg.AllowedOrigins)),
 		externalapi.Use(customhandlers.JSONRequests),
 		externalapi.ExternalAPI(externalapi.NewExternalAPI(svc)),
 	)

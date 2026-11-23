@@ -19,11 +19,11 @@ func BadRequest(reason string) *Error {
 }
 
 func Unauthorized() *Error {
-	return &Error{status: http.StatusUnauthorized, code: "invalidSession", reason: "a valid user session is required"}
+	return &Error{status: http.StatusUnauthorized, code: "invalidUserId", reason: "X-User-Id must contain a valid UUID"}
 }
 
 func Forbidden() *Error {
-	return &Error{status: http.StatusForbidden, code: "forbidden", reason: "origin is not allowed"}
+	return &Error{status: http.StatusForbidden, code: "forbidden", reason: "access denied"}
 }
 
 func ProfileNotFound() *Error {

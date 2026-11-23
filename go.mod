@@ -18,8 +18,8 @@ require (
 )
 
 require (
-	github.com/gofiber/fiber/v2 v2.52.15
-	github.com/golang-jwt/jwt/v5 v5.3.1
+	github.com/ARM-auto-place/access v0.0.0
+	github.com/gofiber/fiber/v2 v2.52.16
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect

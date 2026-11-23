@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"strings"
 	"time"
@@ -29,7 +30,7 @@ type Config struct {
 	LogFormat      string   `env:"LOGGER_FORMAT"`
 	ServiceBind    string   `env:"BIND_ADDR" envDefault:":8083"`
 	HealthBind     string   `env:"BIND_HEALTH" envDefault:":9091"`
-	SessionKey     string   `env:"SESSION_SIGNING_KEY,required"`
+	AccessAddr     string   `env:"ACCESS_ADDRES,required"`
 	AllowedOrigins []string `env:"ALLOWED_ORIGINS" envSeparator:","`
 
 	MaxRequestBodySize   int           `env:"MAX_REQUEST_BODY_SIZE" envDefault:"16384"`
@@ -47,8 +48,9 @@ func Values() (Config, error) {
 	if err := env.Parse(&cfg); err != nil {
 		return Config{}, err
 	}
-	if len(cfg.SessionKey) < 32 {
-		return Config{}, fmt.Errorf("SESSION_SIGNING_KEY must be at least 32 bytes")
+	accessURL, err := url.Parse(cfg.AccessAddr)
+	if err != nil || accessURL.Hostname() == "" || (accessURL.Scheme != "http" && accessURL.Scheme != "https") {
+		return Config{}, fmt.Errorf("ACCESS_ADDRES must be an absolute HTTP or HTTPS URL")
 	}
 	for i := range cfg.AllowedOrigins {
 		cfg.AllowedOrigins[i] = strings.TrimSpace(cfg.AllowedOrigins[i])

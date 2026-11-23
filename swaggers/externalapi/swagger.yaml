@@ -1,0 +1,627 @@
+openapi: 3.0.0
+info:
+    title: Users API
+    version: 1.0.0
+servers:
+    - url: /
+paths:
+    /api/users/v1/car/favorite:
+        get:
+            tags:
+                - ExternalAPI
+            summary: Избранные автомобили пользователя
+            parameters:
+                - in: header
+                  name: X-User-Id
+                  required: true
+                  schema:
+                    type: string
+                    format: uuid
+            responses:
+                "200":
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: array
+                                            items:
+                                                $ref: '#/components/schemas/models.FavoriteCar'
+                                            nullable: true
+                "400":
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "403":
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "500":
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+    /api/users/v1/car/my:
+        get:
+            tags:
+                - ExternalAPI
+            summary: Опубликованные автомобили пользователя
+            parameters:
+                - in: header
+                  name: X-User-Id
+                  required: true
+                  schema:
+                    type: string
+                    format: uuid
+            responses:
+                "200":
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: array
+                                            items:
+                                                $ref: '#/components/schemas/models.MyCar'
+                                            nullable: true
+                "400":
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "403":
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "500":
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+    /api/users/v1/profile:
+        get:
+            tags:
+                - ExternalAPI
+            summary: Профиль текущего пользователя
+            parameters:
+                - in: header
+                  name: X-User-Id
+                  required: true
+                  schema:
+                    type: string
+                    format: uuid
+            responses:
+                "200":
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            $ref: '#/components/schemas/models.Profile'
+                "400":
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "403":
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "500":
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+        post:
+            tags:
+                - ExternalAPI
+            summary: Частичное обновление профиля
+            parameters:
+                - in: header
+                  name: X-User-Id
+                  required: true
+                  schema:
+                    type: string
+                    format: uuid
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/requestExternalAPIUpdateProfile'
+            responses:
+                "200":
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            $ref: '#/components/schemas/models.Profile'
+                "400":
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "403":
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "500":
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+    /api/users/v1/settings:
+        post:
+            tags:
+                - ExternalAPI
+            summary: Частичное обновление настроек
+            parameters:
+                - in: header
+                  name: X-User-Id
+                  required: true
+                  schema:
+                    type: string
+                    format: uuid
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/requestExternalAPIUpdateSettings'
+            responses:
+                "200":
+                    description: Successful operation
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            $ref: '#/components/schemas/models.Settings'
+                "400":
+                    description: Bad Request
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "401":
+                    description: Unauthorized
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "403":
+                    description: Forbidden
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "404":
+                    description: Not Found
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+                "500":
+                    description: Internal Server Error
+                    content:
+                        application/json:
+                            schema:
+                                allOf:
+                                    - $ref: '#/components/schemas/models.ResponseMeta'
+                                    - type: object
+                                      properties:
+                                        data:
+                                            type: object
+components:
+    schemas:
+        models.CarCard:
+            type: object
+            properties:
+                buildYear:
+                    type: number
+                    format: int32
+                carId:
+                    type: string
+                    format: uuid
+                color:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                condition:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                coverImage:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                kilometre:
+                    oneOf:
+                        - type: number
+                          format: int32
+                        - nullable: true
+                mark:
+                    type: string
+                model:
+                    type: string
+                price:
+                    oneOf:
+                        - type: number
+                          format: int32
+                        - nullable: true
+        models.FavoriteCar:
+            allOf:
+                - $ref: '#/components/schemas/models.CarCard'
+                - type: object
+                  properties:
+                    favoritedAt:
+                        type: string
+                        format: date-time
+        models.MyCar:
+            allOf:
+                - $ref: '#/components/schemas/models.CarCard'
+                - type: object
+                  properties:
+                    createdAt:
+                        type: string
+                        format: date-time
+        models.Profile:
+            type: object
+            properties:
+                address:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                age:
+                    oneOf:
+                        - type: number
+                          format: int32
+                        - nullable: true
+                city:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                email:
+                    type: string
+                middleName:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                name:
+                    type: string
+                phone:
+                    type: string
+                photoPath:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                settings:
+                    $ref: '#/components/schemas/models.Settings'
+                surname:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                userId:
+                    type: string
+                    format: uuid
+        models.ProfilePatch:
+            type: object
+            properties:
+                address:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                age:
+                    oneOf:
+                        - type: number
+                          format: int32
+                        - nullable: true
+                city:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                middleName:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                name:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                phone:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                photoPath:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+                surname:
+                    oneOf:
+                        - type: string
+                        - nullable: true
+        models.ResponseMeta:
+            type: object
+            properties:
+                additionalErrors:
+                    type: object
+                    additionalProperties:
+                        type: object
+                error:
+                    type: boolean
+                errorText:
+                    type: string
+        models.Settings:
+            type: object
+            properties:
+                darkMode:
+                    type: boolean
+                privateData:
+                    type: boolean
+        models.SettingsPatch:
+            type: object
+            properties:
+                darkMode:
+                    oneOf:
+                        - type: boolean
+                        - nullable: true
+                privateData:
+                    oneOf:
+                        - type: boolean
+                        - nullable: true
+        requestExternalAPIGetFavoriteCars:
+            type: object
+        requestExternalAPIGetMyCars:
+            type: object
+        requestExternalAPIGetProfile:
+            type: object
+        requestExternalAPIUpdateProfile:
+            allOf:
+                - $ref: '#/components/schemas/models.ProfilePatch'
+        requestExternalAPIUpdateSettings:
+            allOf:
+                - $ref: '#/components/schemas/models.SettingsPatch'
+        responseExternalAPIGetFavoriteCars:
+            type: object
+            required:
+                - cars
+            properties:
+                cars:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/models.FavoriteCar'
+                    nullable: true
+        responseExternalAPIGetMyCars:
+            type: object
+            required:
+                - cars
+            properties:
+                cars:
+                    type: array
+                    items:
+                        $ref: '#/components/schemas/models.MyCar'
+                    nullable: true
+        responseExternalAPIGetProfile:
+            type: object
+            required:
+                - profile
+            properties:
+                profile:
+                    $ref: '#/components/schemas/models.Profile'
+        responseExternalAPIUpdateProfile:
+            type: object
+            required:
+                - profile
+            properties:
+                profile:
+                    $ref: '#/components/schemas/models.Profile'
+        responseExternalAPIUpdateSettings:
+            type: object
+            required:
+                - settings
+            properties:
+                settings:
+                    $ref: '#/components/schemas/models.Settings'

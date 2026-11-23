@@ -1,6 +1,9 @@
 openapi: 3.0.0
+info:
+    title: Users API
+    version: 1.0.0
 servers:
-    - {}
+    - url: /
 paths:
     /api/users/v1/car/favorite:
         get:
@@ -8,12 +11,12 @@ paths:
                 - ExternalAPI
             summary: Избранные автомобили пользователя
             parameters:
-                - in: cookie
-                  name: user_id
+                - in: header
+                  name: X-User-Id
                   required: true
                   schema:
                     type: string
-                    format: jwt
+                    format: uuid
             responses:
                 "200":
                     description: Successful operation
@@ -90,12 +93,12 @@ paths:
                 - ExternalAPI
             summary: Опубликованные автомобили пользователя
             parameters:
-                - in: cookie
-                  name: user_id
+                - in: header
+                  name: X-User-Id
                   required: true
                   schema:
                     type: string
-                    format: jwt
+                    format: uuid
             responses:
                 "200":
                     description: Successful operation
@@ -172,12 +175,12 @@ paths:
                 - ExternalAPI
             summary: Профиль текущего пользователя
             parameters:
-                - in: cookie
-                  name: user_id
+                - in: header
+                  name: X-User-Id
                   required: true
                   schema:
                     type: string
-                    format: jwt
+                    format: uuid
             responses:
                 "200":
                     description: Successful operation
@@ -250,12 +253,12 @@ paths:
                 - ExternalAPI
             summary: Частичное обновление профиля
             parameters:
-                - in: cookie
-                  name: user_id
+                - in: header
+                  name: X-User-Id
                   required: true
                   schema:
                     type: string
-                    format: jwt
+                    format: uuid
             requestBody:
                 content:
                     application/json:
@@ -334,12 +337,12 @@ paths:
                 - ExternalAPI
             summary: Частичное обновление настроек
             parameters:
-                - in: cookie
-                  name: user_id
+                - in: header
+                  name: X-User-Id
                   required: true
                   schema:
                     type: string
-                    format: jwt
+                    format: uuid
             requestBody:
                 content:
                     application/json:

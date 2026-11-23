@@ -33,19 +33,14 @@ func (s *storage) GetProfile(ctx context.Context, id uuid.UUID) (models.Profile,
 }
 
 func (s *storage) UpdateProfile(ctx context.Context, id uuid.UUID, patch models.ProfilePatch) (models.Profile, error) {
+	payload, err := json.Marshal(patch)
+	if err != nil {
+		return models.Profile{}, fmt.Errorf("encode profile patch: %w", err)
+	}
 	ctx, cancel := context.WithTimeout(ctx, defaultTimeout)
 	defer cancel()
 
-	row := s.users.GetMasterConn().QueryRow(ctx, sqlUpdateProfile,
-		id, patch.Name,
-		patch.Has("middleName") || patch.MiddleName != nil, patch.MiddleName,
-		patch.Has("surname") || patch.Surname != nil, patch.Surname,
-		patch.Phone,
-		patch.Has("photoPath") || patch.PhotoPath != nil, patch.PhotoPath,
-		patch.Has("age") || patch.Age != nil, patch.Age,
-		patch.Has("city") || patch.City != nil, patch.City,
-		patch.Has("address") || patch.Address != nil, patch.Address,
-	)
+	row := s.users.GetMasterConn().QueryRow(ctx, sqlUpdateProfile, id, payload)
 	return scanProfile(row, "update profile")
 }
 
@@ -88,18 +83,35 @@ func profileError(operation string, err error) error {
 }
 
 func (s *storage) GetMyCars(ctx context.Context, id uuid.UUID) ([]models.MyCar, error) {
-	return listCars(ctx, s, id, sqlSelectMyCars, "get my cars", func(card models.CarCard, createdAt time.Time) models.MyCar {
-		return models.MyCar{CarCard: card, CreatedAt: createdAt}
-	})
+	rows, err := s.listCars(ctx, id, sqlSelectMyCars, "get my cars")
+	if err != nil {
+		return nil, err
+	}
+	cars := make([]models.MyCar, len(rows))
+	for i, row := range rows {
+		cars[i] = models.MyCar{CarCard: row.card, CreatedAt: row.linkedAt}
+	}
+	return cars, nil
 }
 
 func (s *storage) GetFavoriteCars(ctx context.Context, id uuid.UUID) ([]models.FavoriteCar, error) {
-	return listCars(ctx, s, id, sqlSelectFavoriteCars, "get favorite cars", func(card models.CarCard, createdAt time.Time) models.FavoriteCar {
-		return models.FavoriteCar{CarCard: card, FavoritedAt: createdAt}
-	})
+	rows, err := s.listCars(ctx, id, sqlSelectFavoriteCars, "get favorite cars")
+	if err != nil {
+		return nil, err
+	}
+	cars := make([]models.FavoriteCar, len(rows))
+	for i, row := range rows {
+		cars[i] = models.FavoriteCar{CarCard: row.card, FavoritedAt: row.linkedAt}
+	}
+	return cars, nil
 }
 
-func listCars[T any](ctx context.Context, s *storage, id uuid.UUID, query, operation string, item func(models.CarCard, time.Time) T) ([]T, error) {
+type carRow struct {
+	card     models.CarCard
+	linkedAt time.Time
+}
+
+func (s *storage) listCars(ctx context.Context, id uuid.UUID, query, operation string) ([]carRow, error) {
 	ctx, cancel := context.WithTimeout(ctx, defaultTimeout)
 	defer cancel()
 
@@ -109,20 +121,20 @@ func listCars[T any](ctx context.Context, s *storage, id uuid.UUID, query, opera
 	}
 	defer rows.Close()
 
-	cars := make([]T, 0)
+	var cars []carRow
 	for rows.Next() {
-		var card models.CarCard
+		var car carRow
 		var image json.RawMessage
-		var createdAt time.Time
-		err = rows.Scan(
+		card := &car.card
+		if err := rows.Scan(
 			&card.CarID, &card.Mark, &card.Model, &card.BuildYear, &card.Price, &card.Kilometre,
-			&card.Condition, &card.Color, &image, &createdAt,
-		)
-		if err != nil {
+			&card.Condition, &card.Color, &image, &car.linkedAt,
+		); err != nil {
 			return nil, fmt.Errorf("%s: scan car: %w", operation, err)
 		}
 		card.CoverImage = coverImage(image)
-		cars = append(cars, item(card, createdAt.UTC()))
+		car.linkedAt = car.linkedAt.UTC()
+		cars = append(cars, car)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("%s: read cars: %w", operation, err)

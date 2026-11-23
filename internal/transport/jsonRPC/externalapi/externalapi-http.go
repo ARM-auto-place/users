@@ -2,7 +2,6 @@
 package externalapi
 
 import (
-	customhandels "github.com/ARM-auto-place/users/internal/transport/custom-handels"
 	"github.com/ARM-auto-place/users/pkg/interfaces/externalapi"
 	"github.com/gofiber/fiber/v2"
 )
@@ -39,19 +38,9 @@ func (http *httpExternalAPI) WithErrorHandler(handler ErrorHandler) *httpExterna
 }
 
 func (http *httpExternalAPI) SetRoutes(route *fiber.App) {
-	route.Get("/api/users/v1/profile", func(ctx *fiber.Ctx) (err error) {
-		return customhandels.GetProfile(ctx, http.base)
-	})
-	route.Get("/api/users/v1/car/my", func(ctx *fiber.Ctx) (err error) {
-		return customhandels.GetMyCars(ctx, http.base)
-	})
-	route.Get("/api/users/v1/car/favorite", func(ctx *fiber.Ctx) (err error) {
-		return customhandels.GetFavoriteCars(ctx, http.base)
-	})
-	route.Post("/api/users/v1/profile", func(ctx *fiber.Ctx) (err error) {
-		return customhandels.UpdateProfile(ctx, http.base)
-	})
-	route.Post("/api/users/v1/settings", func(ctx *fiber.Ctx) (err error) {
-		return customhandels.UpdateSettings(ctx, http.base)
-	})
+	route.Get("/api/users/v1/profile", http.serveGetProfile)
+	route.Get("/api/users/v1/car/my", http.serveGetMyCars)
+	route.Get("/api/users/v1/car/favorite", http.serveGetFavoriteCars)
+	route.Post("/api/users/v1/profile", http.serveUpdateProfile)
+	route.Post("/api/users/v1/settings", http.serveUpdateSettings)
 }

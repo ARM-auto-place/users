@@ -90,13 +90,7 @@ func validateProfilePatch(patch models.ProfilePatch) error {
 	if patch.PhotoPath != nil && utf8.RuneCountInString(*patch.PhotoPath) > 255 {
 		return customErrors.BadRequest("photoPath cannot exceed 255 characters")
 	}
-	if patch.Name == nil && patch.Phone == nil &&
-		patch.MiddleName == nil && !patch.Has("middleName") &&
-		patch.Surname == nil && !patch.Has("surname") &&
-		patch.PhotoPath == nil && !patch.Has("photoPath") &&
-		patch.Age == nil && !patch.Has("age") &&
-		patch.City == nil && !patch.Has("city") &&
-		patch.Address == nil && !patch.Has("address") {
+	if patch.Empty() {
 		return customErrors.BadRequest("at least one profile field is required")
 	}
 	return nil

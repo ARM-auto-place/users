@@ -12,8 +12,8 @@ import (
 type ExternalAPIGetProfile func(ctx context.Context, userID uuid.UUID) (profile models.Profile, err error)
 type ExternalAPIGetMyCars func(ctx context.Context, userID uuid.UUID) (cars []models.MyCar, err error)
 type ExternalAPIGetFavoriteCars func(ctx context.Context, userID uuid.UUID) (cars []models.FavoriteCar, err error)
-type ExternalAPIUpdateProfile func(ctx context.Context, userID uuid.UUID, patch models.ProfilePatch) (profile models.Profile, err error)
-type ExternalAPIUpdateSettings func(ctx context.Context, userID uuid.UUID, patch models.SettingsPatch) (settings models.Settings, err error)
+type ExternalAPIUpdateProfile func(ctx context.Context, userID uuid.UUID, profilePatch models.ProfilePatch) (profile models.Profile, err error)
+type ExternalAPIUpdateSettings func(ctx context.Context, userID uuid.UUID, settingsPatch models.SettingsPatch) (settings models.Settings, err error)
 
 type MiddlewareExternalAPI func(next externalapi.ExternalAPI) externalapi.ExternalAPI
 

@@ -80,7 +80,7 @@ func (m loggerExternalAPI) GetFavoriteCars(ctx context.Context, userID uuid.UUID
 	return m.next.GetFavoriteCars(ctx, userID)
 }
 
-func (m loggerExternalAPI) UpdateProfile(ctx context.Context, userID uuid.UUID, patch models.ProfilePatch) (profile models.Profile, err error) {
+func (m loggerExternalAPI) UpdateProfile(ctx context.Context, userID uuid.UUID, profilePatch models.ProfilePatch) (profile models.Profile, err error) {
 	logger := log.Ctx(ctx).With().Str("service", "ExternalAPI").Str("method", "updateProfile").Logger()
 	defer func(_begin time.Time) {
 		logHandle := func(ev *zerolog.Event) {
@@ -96,10 +96,10 @@ func (m loggerExternalAPI) UpdateProfile(ctx context.Context, userID uuid.UUID, 
 		}
 		logger.Info().Func(logHandle).Msg("call updateProfile")
 	}(time.Now())
-	return m.next.UpdateProfile(ctx, userID, patch)
+	return m.next.UpdateProfile(ctx, userID, profilePatch)
 }
 
-func (m loggerExternalAPI) UpdateSettings(ctx context.Context, userID uuid.UUID, patch models.SettingsPatch) (settings models.Settings, err error) {
+func (m loggerExternalAPI) UpdateSettings(ctx context.Context, userID uuid.UUID, settingsPatch models.SettingsPatch) (settings models.Settings, err error) {
 	logger := log.Ctx(ctx).With().Str("service", "ExternalAPI").Str("method", "updateSettings").Logger()
 	defer func(_begin time.Time) {
 		logHandle := func(ev *zerolog.Event) {
@@ -115,5 +115,5 @@ func (m loggerExternalAPI) UpdateSettings(ctx context.Context, userID uuid.UUID,
 		}
 		logger.Info().Func(logHandle).Msg("call updateSettings")
 	}(time.Now())
-	return m.next.UpdateSettings(ctx, userID, patch)
+	return m.next.UpdateSettings(ctx, userID, settingsPatch)
 }

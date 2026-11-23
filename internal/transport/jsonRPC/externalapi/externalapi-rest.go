@@ -4,6 +4,7 @@ package externalapi
 import (
 	"context"
 
+	customhandels "github.com/ARM-auto-place/users/internal/transport/custom-handels"
 	"github.com/gofiber/fiber/v2"
 	uuid "github.com/google/uuid"
 )
@@ -22,27 +23,13 @@ func (http *httpExternalAPI) serveGetProfile(ctx *fiber.Ctx) (err error) {
 
 	var request requestExternalAPIGetProfile
 
-	if _userID := ctx.Cookies("user_id"); _userID != "" {
+	if _userID := string(ctx.Request().Header.Peek("X-User-Id")); _userID != "" {
 		var userID uuid.UUID
 		userID, _ = uuid.Parse(_userID)
 		request.UserID = userID
 	}
 
-	var response responseExternalAPIGetProfile
-	if response, err = http.getProfile(ctx.UserContext(), request); err == nil {
-		var iResponse interface{} = response
-		if redirect, ok := iResponse.(withRedirect); ok {
-			return ctx.Redirect(redirect.RedirectTo())
-		}
-
-		return sendResponse(ctx, response)
-	}
-	if errCoder, ok := err.(withErrorCode); ok {
-		ctx.Status(errCoder.Code())
-	} else {
-		ctx.Status(fiber.StatusInternalServerError)
-	}
-	return sendResponse(ctx, err)
+	return customhandels.GetProfile(ctx, http.svc, request.UserID)
 }
 func (http *httpExternalAPI) getMyCars(ctx context.Context, request requestExternalAPIGetMyCars) (response responseExternalAPIGetMyCars, err error) {
 
@@ -58,27 +45,13 @@ func (http *httpExternalAPI) serveGetMyCars(ctx *fiber.Ctx) (err error) {
 
 	var request requestExternalAPIGetMyCars
 
-	if _userID := ctx.Cookies("user_id"); _userID != "" {
+	if _userID := string(ctx.Request().Header.Peek("X-User-Id")); _userID != "" {
 		var userID uuid.UUID
 		userID, _ = uuid.Parse(_userID)
 		request.UserID = userID
 	}
 
-	var response responseExternalAPIGetMyCars
-	if response, err = http.getMyCars(ctx.UserContext(), request); err == nil {
-		var iResponse interface{} = response
-		if redirect, ok := iResponse.(withRedirect); ok {
-			return ctx.Redirect(redirect.RedirectTo())
-		}
-
-		return sendResponse(ctx, response)
-	}
-	if errCoder, ok := err.(withErrorCode); ok {
-		ctx.Status(errCoder.Code())
-	} else {
-		ctx.Status(fiber.StatusInternalServerError)
-	}
-	return sendResponse(ctx, err)
+	return customhandels.GetMyCars(ctx, http.svc, request.UserID)
 }
 func (http *httpExternalAPI) getFavoriteCars(ctx context.Context, request requestExternalAPIGetFavoriteCars) (response responseExternalAPIGetFavoriteCars, err error) {
 
@@ -94,27 +67,13 @@ func (http *httpExternalAPI) serveGetFavoriteCars(ctx *fiber.Ctx) (err error) {
 
 	var request requestExternalAPIGetFavoriteCars
 
-	if _userID := ctx.Cookies("user_id"); _userID != "" {
+	if _userID := string(ctx.Request().Header.Peek("X-User-Id")); _userID != "" {
 		var userID uuid.UUID
 		userID, _ = uuid.Parse(_userID)
 		request.UserID = userID
 	}
 
-	var response responseExternalAPIGetFavoriteCars
-	if response, err = http.getFavoriteCars(ctx.UserContext(), request); err == nil {
-		var iResponse interface{} = response
-		if redirect, ok := iResponse.(withRedirect); ok {
-			return ctx.Redirect(redirect.RedirectTo())
-		}
-
-		return sendResponse(ctx, response)
-	}
-	if errCoder, ok := err.(withErrorCode); ok {
-		ctx.Status(errCoder.Code())
-	} else {
-		ctx.Status(fiber.StatusInternalServerError)
-	}
-	return sendResponse(ctx, err)
+	return customhandels.GetFavoriteCars(ctx, http.svc, request.UserID)
 }
 func (http *httpExternalAPI) updateProfile(ctx context.Context, request requestExternalAPIUpdateProfile) (response responseExternalAPIUpdateProfile, err error) {
 
@@ -135,27 +94,13 @@ func (http *httpExternalAPI) serveUpdateProfile(ctx *fiber.Ctx) (err error) {
 		return
 	}
 
-	if _userID := ctx.Cookies("user_id"); _userID != "" {
+	if _userID := string(ctx.Request().Header.Peek("X-User-Id")); _userID != "" {
 		var userID uuid.UUID
 		userID, _ = uuid.Parse(_userID)
 		request.UserID = userID
 	}
 
-	var response responseExternalAPIUpdateProfile
-	if response, err = http.updateProfile(ctx.UserContext(), request); err == nil {
-		var iResponse interface{} = response
-		if redirect, ok := iResponse.(withRedirect); ok {
-			return ctx.Redirect(redirect.RedirectTo())
-		}
-
-		return sendResponse(ctx, response)
-	}
-	if errCoder, ok := err.(withErrorCode); ok {
-		ctx.Status(errCoder.Code())
-	} else {
-		ctx.Status(fiber.StatusInternalServerError)
-	}
-	return sendResponse(ctx, err)
+	return customhandels.UpdateProfile(ctx, http.svc, request.UserID, request.ProfilePatch)
 }
 func (http *httpExternalAPI) updateSettings(ctx context.Context, request requestExternalAPIUpdateSettings) (response responseExternalAPIUpdateSettings, err error) {
 
@@ -176,25 +121,11 @@ func (http *httpExternalAPI) serveUpdateSettings(ctx *fiber.Ctx) (err error) {
 		return
 	}
 
-	if _userID := ctx.Cookies("user_id"); _userID != "" {
+	if _userID := string(ctx.Request().Header.Peek("X-User-Id")); _userID != "" {
 		var userID uuid.UUID
 		userID, _ = uuid.Parse(_userID)
 		request.UserID = userID
 	}
 
-	var response responseExternalAPIUpdateSettings
-	if response, err = http.updateSettings(ctx.UserContext(), request); err == nil {
-		var iResponse interface{} = response
-		if redirect, ok := iResponse.(withRedirect); ok {
-			return ctx.Redirect(redirect.RedirectTo())
-		}
-
-		return sendResponse(ctx, response)
-	}
-	if errCoder, ok := err.(withErrorCode); ok {
-		ctx.Status(errCoder.Code())
-	} else {
-		ctx.Status(fiber.StatusInternalServerError)
-	}
-	return sendResponse(ctx, err)
+	return customhandels.UpdateSettings(ctx, http.svc, request.UserID, request.SettingsPatch)
 }

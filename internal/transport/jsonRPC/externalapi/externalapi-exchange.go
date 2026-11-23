@@ -7,7 +7,7 @@ import (
 )
 
 type requestExternalAPIGetProfile struct {
-	UserID uuid.UUID `json:"userID,omitempty"`
+	UserID uuid.UUID `json:"-"`
 }
 
 type responseExternalAPIGetProfile struct {
@@ -15,7 +15,7 @@ type responseExternalAPIGetProfile struct {
 }
 
 type requestExternalAPIGetMyCars struct {
-	UserID uuid.UUID `json:"userID,omitempty"`
+	UserID uuid.UUID `json:"-"`
 }
 
 type responseExternalAPIGetMyCars struct {
@@ -23,7 +23,7 @@ type responseExternalAPIGetMyCars struct {
 }
 
 type requestExternalAPIGetFavoriteCars struct {
-	UserID uuid.UUID `json:"userID,omitempty"`
+	UserID uuid.UUID `json:"-"`
 }
 
 type responseExternalAPIGetFavoriteCars struct {
@@ -31,7 +31,7 @@ type responseExternalAPIGetFavoriteCars struct {
 }
 
 type requestExternalAPIUpdateProfile struct {
-	UserID              uuid.UUID `json:"userID,omitempty"`
+	UserID              uuid.UUID `json:"-"`
 	models.ProfilePatch `json:",inline"`
 }
 
@@ -40,7 +40,7 @@ type responseExternalAPIUpdateProfile struct {
 }
 
 type requestExternalAPIUpdateSettings struct {
-	UserID               uuid.UUID `json:"userID,omitempty"`
+	UserID               uuid.UUID `json:"-"`
 	models.SettingsPatch `json:",inline"`
 }
 

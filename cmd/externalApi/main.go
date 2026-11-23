@@ -74,6 +74,7 @@ func main() {
 		})),
 		externalapi.Use(customhandlers.LogRequests),
 		externalapi.Use(customhandlers.Authenticate(cfg.SessionKey, cfg.AllowedOrigins)),
+		externalapi.Use(customhandlers.JSONRequests),
 		externalapi.ExternalAPI(externalapi.NewExternalAPI(svc)),
 	)
 	app.ServeHealth(cfg.HealthBind, map[string]string{"status": "ok"})

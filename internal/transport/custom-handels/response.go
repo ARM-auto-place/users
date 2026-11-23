@@ -2,6 +2,8 @@ package custom_handlers
 
 import (
 	"errors"
+	"mime"
+	"strings"
 	"time"
 
 	customErrors "github.com/ARM-auto-place/users/pkg/models/errors"
@@ -9,6 +11,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/rs/zerolog"
 )
+
+func JSONRequests(ctx *fiber.Ctx) error {
+	if ctx.Method() != fiber.MethodPost {
+		return ctx.Next()
+	}
+	mediaType, _, err := mime.ParseMediaType(ctx.Get(fiber.HeaderContentType))
+	if err != nil || mediaType != fiber.MIMEApplicationJSON {
+		return SendResponse(ctx, nil, customErrors.BadRequest("Content-Type must be application/json"))
+	}
+	err = ctx.Next()
+	if err == nil && ctx.Response().StatusCode() == fiber.StatusBadRequest &&
+		!strings.HasPrefix(ctx.GetRespHeader(fiber.HeaderContentType), fiber.MIMEApplicationJSON) {
+		return SendResponse(ctx, nil, customErrors.BadRequest("invalid JSON update"))
+	}
+	return err
+}
 
 func SendResponse(ctx *fiber.Ctx, data any, err error) error {
 	status := fiber.StatusOK

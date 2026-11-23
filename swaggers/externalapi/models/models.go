@@ -1,10 +1,8 @@
 package models
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"slices"
 	"time"
 
 	"github.com/google/uuid"
@@ -44,14 +42,48 @@ type ProfilePatch struct {
 func (p *ProfilePatch) UnmarshalJSON(data []byte) error {
 	type fields ProfilePatch
 	*p = ProfilePatch{}
-	return decodePatch(data, (*fields)(p), &p.present,
-		"name", "middleName", "surname", "phone", "photoPath", "age", "city", "address")
+	if err := json.Unmarshal(data, &p.present); err != nil {
+		return err
+	}
+	if p.present == nil {
+		return fmt.Errorf("expected a JSON object")
+	}
+	for field := range p.present {
+		switch field {
+		case "name", "middleName", "surname", "phone", "photoPath", "age", "city", "address":
+		default:
+			return fmt.Errorf("unknown field %q", field)
+		}
+	}
+	return json.Unmarshal(data, (*fields)(p))
 }
 
-// Has reports whether the JSON included a field, including explicit null.
+func (p ProfilePatch) MarshalJSON() ([]byte, error) {
+	type fields ProfilePatch
+	data, err := json.Marshal(fields(p))
+	if err != nil || len(p.present) == 0 {
+		return data, err
+	}
+	var values map[string]json.RawMessage
+	if err := json.Unmarshal(data, &values); err != nil {
+		return nil, err
+	}
+	for field := range p.present {
+		if _, ok := values[field]; !ok {
+			values[field] = json.RawMessage("null")
+		}
+	}
+	return json.Marshal(values)
+}
+
 func (p ProfilePatch) Has(field string) bool {
 	_, ok := p.present[field]
 	return ok
+}
+
+func (p ProfilePatch) Empty() bool {
+	return len(p.present) == 0 && p.Name == nil && p.MiddleName == nil && p.Surname == nil &&
+		p.Phone == nil && p.PhotoPath == nil && p.Age == nil && p.City == nil && p.Address == nil
 }
 
 type SettingsPatch struct {
@@ -60,33 +92,23 @@ type SettingsPatch struct {
 }
 
 func (p *SettingsPatch) UnmarshalJSON(data []byte) error {
-	type fields SettingsPatch
-	*p = SettingsPatch{}
-	var present map[string]json.RawMessage
-	if err := decodePatch(data, (*fields)(p), &present, "darkMode", "privateData"); err != nil {
+	var fields map[string]*bool
+	if err := json.Unmarshal(data, &fields); err != nil {
 		return err
 	}
-	for field, value := range present {
-		if bytes.Equal(value, []byte("null")) {
+	if fields == nil {
+		return fmt.Errorf("expected a JSON object")
+	}
+	for field, value := range fields {
+		if field != "darkMode" && field != "privateData" {
+			return fmt.Errorf("unknown field %q", field)
+		}
+		if value == nil {
 			return fmt.Errorf("%s must be a boolean", field)
 		}
 	}
+	*p = SettingsPatch{DarkMode: fields["darkMode"], PrivateData: fields["privateData"]}
 	return nil
-}
-
-func decodePatch(data []byte, target any, present *map[string]json.RawMessage, allowed ...string) error {
-	if err := json.Unmarshal(data, present); err != nil {
-		return err
-	}
-	if *present == nil {
-		return fmt.Errorf("expected a JSON object")
-	}
-	for field := range *present {
-		if !slices.Contains(allowed, field) {
-			return fmt.Errorf("unknown field %q", field)
-		}
-	}
-	return json.Unmarshal(data, target)
 }
 
 type CarCard struct {

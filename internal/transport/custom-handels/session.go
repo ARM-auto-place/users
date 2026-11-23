@@ -11,8 +11,6 @@ import (
 	"github.com/google/uuid"
 )
 
-type sessionUserKey struct{}
-
 func Authenticate(signingKey string, allowedOrigins []string) fiber.Handler {
 	key := []byte(signingKey)
 	parser := jwt.NewParser(jwt.WithValidMethods([]string{"HS256"}), jwt.WithExpirationRequired(),
@@ -25,7 +23,7 @@ func Authenticate(signingKey string, allowedOrigins []string) fiber.Handler {
 		if ctx.Method() == fiber.MethodPost && !allowedOrigin(ctx, allowedOrigins) {
 			return SendResponse(ctx, nil, customErrors.Forbidden())
 		}
-		ctx.Locals(sessionUserKey{}, id)
+		ctx.Request().Header.Set("X-User-Id", id.String())
 		return ctx.Next()
 	}
 }

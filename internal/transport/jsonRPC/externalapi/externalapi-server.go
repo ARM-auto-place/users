@@ -61,12 +61,12 @@ func (srv *serverExternalAPI) GetFavoriteCars(ctx context.Context, userID uuid.U
 	return srv.getFavoriteCars(ctx, userID)
 }
 
-func (srv *serverExternalAPI) UpdateProfile(ctx context.Context, userID uuid.UUID, patch models.ProfilePatch) (profile models.Profile, err error) {
-	return srv.updateProfile(ctx, userID, patch)
+func (srv *serverExternalAPI) UpdateProfile(ctx context.Context, userID uuid.UUID, profilePatch models.ProfilePatch) (profile models.Profile, err error) {
+	return srv.updateProfile(ctx, userID, profilePatch)
 }
 
-func (srv *serverExternalAPI) UpdateSettings(ctx context.Context, userID uuid.UUID, patch models.SettingsPatch) (settings models.Settings, err error) {
-	return srv.updateSettings(ctx, userID, patch)
+func (srv *serverExternalAPI) UpdateSettings(ctx context.Context, userID uuid.UUID, settingsPatch models.SettingsPatch) (settings models.Settings, err error) {
+	return srv.updateSettings(ctx, userID, settingsPatch)
 }
 
 func (srv *serverExternalAPI) WrapGetProfile(m MiddlewareExternalAPIGetProfile) {
